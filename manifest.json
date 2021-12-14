@@ -1,0 +1,28 @@
+{
+
+    "manifest_version": 2,
+    "name": "Embedded Emotes",
+    "version": "1.0",
+  
+    "description": "sort of like a clipboard, but for discord emotes",
+
+    "icons": {
+        "48": "icon.png"
+    },
+  
+    "background": {
+        "scripts": [
+            "ctxmenu.js"
+        ]
+    },
+
+    "permissions": [
+        "menus",
+        "activeTab",
+        "contextMenus",
+        "clipboardWrite",
+        "storage",
+        "unlimitedStorage"
+    ]
+}
+  

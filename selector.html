@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Emotes</title>
+    <link rel="stylesheet" href="selector.css">
+</head>
+<body style="background-color: #1f1f1f; color: #ffffff; margin: 0;">
+    <div style="display: flex; justify-content: center; align-items: center; height: 10vh;">
+        <input style="width: 95%" id="emote-search" placeholder="Search emotes...">
+    </div>
+    <div style="height: 60vh;" class="unscroll">
+        <div id="emote-list" style="display: flex; flex-wrap: wrap;">
+
+        </div>
+    </div>
+    <div style="height: 30vh; background-color: #282828;">
+        <div style="display: flex;">
+            <div id="emote-preview" style="background-image: url(''); background-repeat: no-repeat; background-position: center; width: 48px; height: 48px;"></div>
+            <div>
+                <table>
+                    <tr>
+                        <td>Name:</td>
+                        <td>
+                            <input id="emote-pr-name">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>URL:</td>
+                        <td>
+                            <input id="emote-pr-url">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div style="display: flex; flex-direction: row;">
+            <button id="emote-delete" style="margin-right: auto;">Delete</button>
+            <button id="emote-overwrite">Overwrite</button>
+        </div>
+    </div>
+    <script src="fuse.js"></script>
+    <script src="selector.js"></script>
+</body>
+</html>
