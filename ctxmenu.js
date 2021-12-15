@@ -3,18 +3,21 @@ browser.contextMenus.create({
     id: "new-emote",
     title: "Add emote..",
     contexts: ["image", "link"],
+    targetUrlPatterns: ["*://cdn.discordapp.com/*"]
 });
 
 browser.contextMenus.create({
     id: "all-emote",
     title: "All emote",
     contexts: ["editable"],
+    documentUrlPatterns: ["*://*.discord.com/*"]
 });
 
 browser.contextMenus.create({
     id: "separator-1",
     type: "separator",
     contexts: ["editable"],
+    documentUrlPatterns: ["*://*.discord.com/*"]
 });
 
 for (i = 0; i < 5; i++) {
@@ -22,6 +25,7 @@ for (i = 0; i < 5; i++) {
         id: "most-used-" + i,
         title: "",
         contexts: ["editable"],
+        documentUrlPatterns: ["*://*.discord.com/*"]
     })
 };
 
@@ -43,7 +47,7 @@ browser.contextMenus.onClicked.addListener(function(info, tab){
             code: `browser.menus.getTargetElement(${info.targetElementId}).alt;`,
         }).then(res => { 
             let alt = res[0];
-            let data = {name: alt, url: info.srcUrl.split("?")[0] + "?size=48", count: 0};
+            let data = {name: alt, url: parseEmoteUrl(info.srcUrl), count: 0};
             browser.storage.local.get().then(res => {
                 let emotes = res.emotes;
                 emotes.push(data);
@@ -72,7 +76,9 @@ browser.contextMenus.onClicked.addListener(function(info, tab){
     };
 });
 
-browser.contextMenus.onShown.addListener(function(info, tab) {
+browser.contextMenus.onShown.addListener(function(info, tab) {    
+    if (!tab.url.match(/(https?:\/\/)?discord\.com\//)) {return false};
+
     browser.storage.local.get().then(res => {
         let emotes = res.emotes;
         emotes.sort(function(a, b) {return b.count - a.count}).splice(5);
@@ -109,3 +115,12 @@ browser.contextMenus.onShown.addListener(function(info, tab) {
         };
     }).then(() => {browser.contextMenus.refresh()});
 });
+
+function parseEmoteUrl(url) {
+    // sample: https://images-ext-1.discordapp.net/external/4Ffyh1-msFOxj_6OuVMBU_PjoTzy6KjWhMIUfX-xof0/%3Fsize%3D48/https/cdn.discordapp.com/emojis/720638944357646436.png
+    if (url.includes("/https/")) {
+        url = "https://" + url.split("/https/")[1];
+    };
+
+    return url.split("?")[0] + "?size=48";
+}
