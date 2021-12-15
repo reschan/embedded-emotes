@@ -6,6 +6,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
     browser.storage.local.get().then(res => {
         update(res.emotes);
     });
+    
+    document.addEventListener("keydown", function(e) {
+        if (e.key == "Escape") {
+            window.close();
+        }
+    });
+
+    document.getElementById("emote-search").focus();
 });
 
 
@@ -44,6 +52,8 @@ function update(emotes) {
         emote.tabIndex = 0;
         emote.onclick = function() {selectEmote(value.id); previewEmote()};
         emote.ondblclick = function() {navigator.clipboard.writeText(value.url); recentEmote(value.id); window.close();};
+        emote.onfocus = function() {selectEmote(value.id); previewEmote()};
+        emote.onkeydown = function(e) {if (e.key == "Enter") {navigator.clipboard.writeText(value.url); recentEmote(value.id); window.close();}};
         emotelist.appendChild(emote);
     };
 };
@@ -107,8 +117,8 @@ function overwriteEmote() {
         return;
     };
     let emoteId = selected[0].id;
-    let name = document.getElementById("emote-pr-name").value;
-    let url = document.getElementById("emote-pr-url").value;
+    let name = escapeHTML(document.getElementById("emote-pr-name").value);
+    let url = escapeHTML(document.getElementById("emote-pr-url").value);
     browser.storage.local.get().then(res => {
         res.emotes[emoteId].name = name;
         res.emotes[emoteId].url = url;
@@ -146,4 +156,15 @@ function updateSearchSchedule(){
         updateSearchTask = null;
         emotesearch();
     }, 500);
+}
+
+
+// https://gist.github.com/Rob--W/ec23b9d6db9e56b7e4563f1544e0d546
+function escapeHTML(str) {
+    // Note: string cast using String; may throw if `str` is non-serializable, e.g. a Symbol.
+    // Most often this is not the case though.
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
