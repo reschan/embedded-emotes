@@ -52,8 +52,6 @@ function update(emotes) {
         emote.tabIndex = 0;
         emote.onclick = function() {selectEmote(value.id); previewEmote()};
         emote.ondblclick = function() {navigator.clipboard.writeText(value.url); recentEmote(value.id); window.close();};
-        emote.onfocus = function() {selectEmote(value.id); previewEmote()};
-        emote.onkeydown = function(e) {if (e.key == "Enter") {navigator.clipboard.writeText(value.url); recentEmote(value.id); window.close();}};
         emotelist.appendChild(emote);
     };
 };

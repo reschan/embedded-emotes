@@ -16,6 +16,22 @@
         ]
     },
 
+    "content_scripts": [
+        {
+            "matches": ["*://*.discord.com/*"],
+            "js": ["searcher.js", "fuse.js"],
+            "css": ["searcher.css"]
+        }
+    ],
+
+    "browser_action": {
+        "browser_style": true,
+        "default_popup": "selector.html",
+        "default_icon": {
+            "48": "icon.png"
+        }
+    },
+
     "permissions": [
         "menus",
         "tabs",

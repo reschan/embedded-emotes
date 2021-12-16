@@ -6,29 +6,6 @@ browser.contextMenus.create({
     targetUrlPatterns: ["*://cdn.discordapp.com/*"]
 });
 
-browser.contextMenus.create({
-    id: "all-emote",
-    title: "All emote",
-    contexts: ["editable"],
-    documentUrlPatterns: ["*://*.discord.com/*"]
-});
-
-browser.contextMenus.create({
-    id: "separator-1",
-    type: "separator",
-    contexts: ["editable"],
-    documentUrlPatterns: ["*://*.discord.com/*"]
-});
-
-for (i = 0; i < 5; i++) {
-    browser.contextMenus.create({
-        id: "most-used-" + i,
-        title: "",
-        contexts: ["editable"],
-        documentUrlPatterns: ["*://*.discord.com/*"]
-    })
-};
-
 // initialize emote storage, if it does not exist
 browser.storage.local.get().then(res => {
     if (!res.emotes) {
@@ -57,63 +34,13 @@ browser.contextMenus.onClicked.addListener(function(info, tab){
                         let emotes = res.emotes;
                         for (let i in emotes) {
                             emotes[i].id = i;
-                        }
+                        };
                         browser.storage.local.set({emotes: emotes});
                     });
                 });
             });
         });
     };
-
-    if (info.menuItemId == "all-emote") {
-        browser.windows.create({
-            url: "selector.html",
-            width: 272,
-            height: 300,
-            top: 1,
-            type: "popup",
-        });
-    };
-});
-
-browser.contextMenus.onShown.addListener(function(info, tab) {    
-    if (!tab.url.match(/(https?:\/\/)?discord\.com\//)) {return false};
-
-    browser.storage.local.get().then(res => {
-        let emotes = res.emotes;
-        emotes.sort(function(a, b) {return b.count - a.count}).splice(5);
-        for (i=0; i < 5; i++) {
-            if (!emotes[i]) {
-                browser.contextMenus.update(
-                    "most-used-" + i,
-                    {
-                        title: "",
-                        "icons": undefined,
-                    }
-                );
-            }
-            else {
-                browser.contextMenus.update(
-                    "most-used-" + i,
-                    {
-                        title: emotes[i].name,
-                        "icons": {
-                            "48": emotes[i].url,
-                            "96": emotes[i].url
-                        },
-                        onclick: function(info, tab) {
-                            id = info.menuItemId.split("-")[2];
-                            navigator.clipboard.writeText(emotes[id].url);
-                            browser.storage.local.get().then(res => {
-                                res.emotes[emotes[id].id].count += 1;
-                                browser.storage.local.set({emotes: res.emotes});
-                            });
-                        }
-                    }
-                );
-            }
-        };
-    }).then(() => {browser.contextMenus.refresh()});
 });
 
 function parseEmoteUrl(url) {
