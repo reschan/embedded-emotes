@@ -2,8 +2,7 @@
 browser.contextMenus.create({
     id: "new-emote",
     title: "Add emote..",
-    contexts: ["image", "link"],
-    targetUrlPatterns: ["*://cdn.discordapp.com/*"]
+    documentUrlPatterns: ["*://*.discord.com/*"],
 });
 
 // initialize emote storage, if it does not exist
@@ -15,16 +14,22 @@ browser.storage.local.get().then(res => {
 
 browser.contextMenus.onClicked.addListener(function(info, tab){
     if (info.menuItemId == "new-emote") {
-        if (!info.srcUrl.includes("cdn.discordapp.com")) {
-            return false;
-        };  
+        let emotedata;
+        if (!info.srcUrl) {
+            emotedata = browser.tabs.executeScript(tab.id, {
+                code: `if (browser.menus.getTargetElement(${info.targetElementId}).tagName == "BUTTON") {[browser.menus.getTargetElement(${info.targetElementId}).children[0].src, browser.menus.getTargetElement(${info.targetElementId}).children[0].alt]} else {false};`,
+            });
+        } else {
+            emotedata = browser.tabs.executeScript(tab.id, {
+                code: `[browser.menus.getTargetElement(${info.targetElementId}).src, browser.menus.getTargetElement(${info.targetElementId}).alt];`,
+            });
+        }
+        emotedata.then(res => {
+            if (!res[0] || !res[0][0].includes("cdn.discordapp.com")) {
+                return;
+            };
 
-        // Assign image alt text as the emote name
-        browser.tabs.executeScript(tab.id, {
-            code: `browser.menus.getTargetElement(${info.targetElementId}).alt;`,
-        }).then(res => { 
-            let alt = res[0];
-            let data = {name: alt, url: parseEmoteUrl(info.srcUrl), count: 0};
+            let data = {name: res[0][1], url: parseEmoteUrl(res[0][0]), count: 0};
             browser.storage.local.get().then(res => {
                 let emotes = res.emotes;
                 emotes.push(data);
