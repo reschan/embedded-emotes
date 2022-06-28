@@ -28,12 +28,15 @@ document.addEventListener("keydown", e => {
         setSelection("up", document.getElementById("embeddedemotes-search-result"));
     }
     else if (e.key == "Enter" || e.key == "Tab") {
-        let selected = document.getElementsByClassName("embeddedemotes-selected")[0].id;
-        browser.storage.local.get().then(res => {
-            navigator.clipboard.writeText(res.emotes[selected].url);
-            updateEmoteCount(selected);
-            removeSearch();
-        });
+        e.preventDefault();
+        let selected = document.getElementsByClassName("embeddedemotes-selected")[0];
+        if (selected !== undefined) {
+            browser.storage.local.get().then(res => {
+                navigator.clipboard.writeText(res.emotes[selected.id].url);
+                updateEmoteCount(selected.id);
+            });
+        }
+        removeSearch();
     }
 });
 
@@ -90,7 +93,7 @@ function populateSearchResult(query, reselem) {
 
         reselem.innerHTML = "";
         for (let emote in result) {
-            emoteResult = document.createElement("div");
+            let emoteResult = document.createElement("div");
             emoteResult.classList.add("embeddedemotes-emote");
             emoteResult.id = result[emote].id;
             if (emote == 0) {emoteResult.classList.add("embeddedemotes-selected");};
