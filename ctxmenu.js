@@ -1,7 +1,15 @@
+// FUTURE IDEA: INJECT SELECTOR DIRECTLY INTO DISCORD EMOTE SELECTOR.
+
 // initialize context menus
 browser.contextMenus.create({
     id: "new-emote",
     title: "Add emote..",
+    documentUrlPatterns: ["*://*.discord.com/*"],
+});
+
+browser.contextMenus.create({
+    id: "get-emote",
+    title: "Get emote url",
     documentUrlPatterns: ["*://*.discord.com/*"],
 });
 
@@ -14,16 +22,7 @@ browser.storage.local.get().then(res => {
 
 browser.contextMenus.onClicked.addListener(function(info, tab){
     if (info.menuItemId == "new-emote") {
-        let emotedata;
-        if (!info.srcUrl) {
-            emotedata = browser.tabs.executeScript(tab.id, {
-                code: `if (browser.menus.getTargetElement(${info.targetElementId}).tagName == "BUTTON") {[browser.menus.getTargetElement(${info.targetElementId}).children[0].src, browser.menus.getTargetElement(${info.targetElementId}).children[0].alt]} else {false};`,
-            });
-        } else {
-            emotedata = browser.tabs.executeScript(tab.id, {
-                code: `[browser.menus.getTargetElement(${info.targetElementId}).src, browser.menus.getTargetElement(${info.targetElementId}).alt];`,
-            });
-        }
+        let emotedata = getEmoteData(info, tab);
         emotedata.then(res => {
             if (!res[0] || !res[0][0].includes("cdn.discordapp.com")) {
                 return;
@@ -46,6 +45,17 @@ browser.contextMenus.onClicked.addListener(function(info, tab){
             });
         });
     };
+
+    if (info.menuItemId == "get-emote") {
+        let emotedata = getEmoteData(info, tab);
+        emotedata.then(res => {
+            if (!res[0] || !res[0][0].includes("cdn.discordapp.com")) {
+                return;
+            };
+
+            navigator.clipboard.writeText(parseEmoteUrl(res[0][0]));
+        });
+    };
 });
 
 function parseEmoteUrl(url) {
@@ -55,4 +65,18 @@ function parseEmoteUrl(url) {
     };
 
     return url.split("?")[0] + "?size=48";
+}
+
+function getEmoteData(info, tab) {
+    let emotedata;
+    if (!info.srcUrl) {
+        emotedata = browser.tabs.executeScript(tab.id, {
+            code: `if (browser.menus.getTargetElement(${info.targetElementId}).tagName == "BUTTON") {[browser.menus.getTargetElement(${info.targetElementId}).children[0].src, browser.menus.getTargetElement(${info.targetElementId}).children[0].alt]} else {false};`,
+        });
+    } else {
+        emotedata = browser.tabs.executeScript(tab.id, {
+            code: `[browser.menus.getTargetElement(${info.targetElementId}).src, browser.menus.getTargetElement(${info.targetElementId}).alt];`,
+        });
+    }
+    return emotedata;
 }
