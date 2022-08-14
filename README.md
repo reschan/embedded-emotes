@@ -2,7 +2,7 @@
 Poor man's cross-server discord emote, or a fancier permanent clipboard. Firefox extension.
 
 
-### Signed XPI file: [embedded-emotes](https://addons.mozilla.org/firefox/downloads/file/3882445/embedded_emotes-1.1.2-fx.xpi)
+### Head over to releases for latest ver.
 
 ## Usage:
 
@@ -12,3 +12,4 @@ Poor man's cross-server discord emote, or a fancier permanent clipboard. Firefox
   - ![image](https://user-images.githubusercontent.com/77039964/176062649-39495a1c-a297-469c-9260-fa1ea1ad950b.png)
 - Right clicking on a custom emote in the discord emote search bar will let you save it to storage
   - ![image](https://user-images.githubusercontent.com/77039964/176062913-11e182a2-12c6-4e14-95d9-ddd6d5c14875.png)
+- Alternatively, you can grab the emote URL directly off of Discord's emote selector.
