@@ -7,12 +7,6 @@ browser.contextMenus.create({
     documentUrlPatterns: ["*://*.discord.com/*"],
 });
 
-browser.contextMenus.create({
-    id: "get-emote",
-    title: "Get emote url",
-    documentUrlPatterns: ["*://*.discord.com/*"],
-});
-
 // initialize emote storage, if it does not exist
 browser.storage.local.get().then(res => {
     if (!res.emotes) {
@@ -43,17 +37,6 @@ browser.contextMenus.onClicked.addListener(function(info, tab){
                     });
                 });
             });
-        });
-    };
-
-    if (info.menuItemId == "get-emote") {
-        let emotedata = getEmoteData(info, tab);
-        emotedata.then(res => {
-            if (!res[0] || !res[0][0].includes("cdn.discordapp.com")) {
-                return;
-            };
-
-            navigator.clipboard.writeText(parseEmoteUrl(res[0][0]));
         });
     };
 });
